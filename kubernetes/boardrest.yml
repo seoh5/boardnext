@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boardrest-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boardrest
+  template:
+    metadata:
+      name: boardrest
+      labels:
+        app: boardrest
+    spec:
+      volumes:
+      - name: boardrest-data
+        hostPath: 
+          path: /home/xavier/boardrest_volume/Repository
+          type: DirectoryOrCreate 
+      containers:
+      - name: boardrest
+        image: docker.io/redleon1/boardrest-boardnext:{{VERSION}}
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: boardrest-data
+          mountPath: /var/opt/Repository
+        ports:
+        - containerPort: 8080
+        env:
+        # 1. ConfigMap에서 가져오는 값
+        - name: DBMS_DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: boardnext-config
+              key: DBMS_DRIVER
+        - name: DBMS_URL
+          valueFrom: 
+            configMapKeyRef:
+              name: boardnext-config
+              key: DBMS_URL
+        - name: DBMS_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: boardnext-config
+              key: DBMS_USERNAME
+        # 2. Secret에서 가져오는 값
+        - name: DBMS_PW
+          valueFrom:
+            secretKeyRef:
+              name: dbms-secret
+              key: DBMS_PW
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: boardrest-service
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30005
+  selector:
+    app: boardrest
+  type: NodePort

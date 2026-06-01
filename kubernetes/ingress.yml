@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service  #이 Service는 ingress-nginx 시스템의 controller용 Service
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/component: controller
+  annotations: 
+    metallb.universe.tf/address-pool: boardnext-pool
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: https
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/component: controller
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: boardnext-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.boardnext.com
+      secretName: tlssecret
+  rules:
+    - host: www.boardnext.com
+      http:
+        paths:
+          # 1. API 서비스 경로 추가 (반드시 / 보다 위에 위치해야 함)
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: boardrest-service
+                port:
+                  number: 8080
+          # 2. 기존 프론트엔드 경로
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
