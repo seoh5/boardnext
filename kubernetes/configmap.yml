@@ -6,6 +6,9 @@ data:
   DBMS_URL: "jdbc:oracle:thin:@//192.168.0.10:1521/springpdb"
   DBMS_DRIVER: "oracle.jdbc.driver.OracleDriver"
   DBMS_USERNAME: "springdev"
+  google_secret: "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"
+  google_id: "711523001885-juqcv9l9a68vuln6fljl3on38hs6n9a7.apps.googleusercontent.com"
+  naver_secret: "hACwVsfU4M"
   
   # [Apache용] 리버스 프록시 설정 파일 (통째로 텍스트 저장)
   httpd-vhosts.conf: |
