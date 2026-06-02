@@ -17,7 +17,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity,Long>{
 	//select * from jpa_board where writer like '%'||'aaa'||'%' or title like '%'||'aaa'||'%' or content like '%'||'aaa'||'%' 	
 	//게시물 이전 보기 - JPQL(Java Persistent Query Language)
 	@Query("select max(b.seqno) from board b where b.seqno < :seqno and (b.writer like %:keyword1% or b.title like %:keyword2% or b.content like %:keyword3%)")
-	public Long findPreSeqno(@Param("seqno") Long seqno, @Param("keyword1") String keyword1,@Param("keyword2") String keyword2,@Param("keyword3") String keyword3); 
+	public Long findPreSeqno(@Param("seqno") Long seqno, @Param("keyword1") String keyword1,@Param("keyword2") String keyword2,@Param("keyword3") String keyword3);
 	
 	//게시물 다음 보기 - JPQL(Java Persistent Query Language)
 	@Query("select min(b.seqno) from board b where b.seqno > :seqno and (b.writer like %:keyword1% or b.title like %:keyword2% or b.content like %:keyword3%)")

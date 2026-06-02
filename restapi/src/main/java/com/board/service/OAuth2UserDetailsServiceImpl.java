@@ -38,6 +38,7 @@ public class OAuth2UserDetailsServiceImpl extends DefaultOAuth2UserService{
 		String providerId = oAuth2User.getAttribute("sub");
 		String email = null;
 		
+		//구글이나 네이버에서 보내 주는 값--> email을 가져 오는 부
 		if(provider.equals("naver")) {
 			Map<String,Object> response = oAuth2User.getAttribute("response");
 			email = (String) response.get("email");

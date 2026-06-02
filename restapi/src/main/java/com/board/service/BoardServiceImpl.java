@@ -41,7 +41,7 @@ public class BoardServiceImpl implements BoardService{
 	//게시물 목록 보기
 	@Override
 	public Page<BoardEntity> list(int pageNum,int postNum, String keyword){
-		PageRequest pageRequest = PageRequest.of(pageNum-1, postNum, Sort.by(Direction.DESC,"seqno"));
+		PageRequest pageRequest = PageRequest.of(pageNum-1, postNum, Sort.by(Direction.DESC,"seqno"));		
 		return boardRepository.findByWriterContainingOrTitleContainingOrContentContaining(keyword, keyword, keyword, pageRequest);
 		
 	}
@@ -91,7 +91,10 @@ public class BoardServiceImpl implements BoardService{
 	
 	//게시물 수정 
 	@Override
-	public void modify(BoardDTO board) {		
+	public void modify(BoardDTO board) {
+		//DBMS에서 행이 여러개인 값이 나오는 조건의 경우 값이 안 나오면 이것도 값이고 null이 아님. 
+		//그런데, 조건절이 있어서 값이 하나만 나오는 경우 값이 안 나오면 null이 리턴됨 
+		//그래서, Otional 객채의 경우 하나만 나오는 경우 null 발생을 방지하기 위하여 get() 메소드를 사용.
 		BoardEntity boardEntity = boardRepository.findById(board.getSeqno()).get();
 		boardEntity.setTitle(board.getTitle());
 		boardEntity.setContent(board.getContent());		
@@ -194,7 +197,8 @@ public class BoardServiceImpl implements BoardService{
 	public void boardLikeUpdate(Long seqno, int likecnt, int dislikecnt) 
 			throws Exception {
 		
-		BoardEntity boardEntity = boardRepository.findById(seqno).get();
+		BoardEntity boardEntity = boardRepository.findById(seqno)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글 번호: " + seqno));
 		boardEntity.setLikecnt(likecnt);
 		boardEntity.setDislikecnt(dislikecnt);
 		boardRepository.save(boardEntity);		

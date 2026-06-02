@@ -41,7 +41,7 @@ public class WebSecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
-	//로그인 처리
+	//접근 권한 설정 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
         
@@ -62,7 +62,7 @@ public class WebSecurityConfig {
            기본적으로 활성화 되어 있는 해당 필터는 동작하지 않으며,
            따라서, 로그인을 진행하기 위해서 필터를 커스텀하여 등록해야 함.
            실행순서 : 리액트와 REST API를 이용한 로그인을 통해 토큰 및 쿠키 생성 
-                  -> REST API 실행할때마다 Authorization Bearer 필드에 포함된 토큰을 JWTFILTER를 통해 읽어 들이고 유효성 검증 
+                  -> REST API 실행할때마다 Authorization Bearer 필드에 포함된 토큰을 JWT FILTER를 통해 읽어 들이고 유효성 검증 
                   -> UsernamePasswordAuthenticationFilter를 통해 아이디, 패스워드 검증
                   -> 필처 체인에서 접근권한 설정 가능해 짐...    
          */
@@ -90,9 +90,7 @@ public class WebSecurityConfig {
 			.requestMatchers("/api/swagger-ui/**","/v3/api-docs/**").permitAll()
 			.requestMatchers("/api/board/**").hasAnyAuthority("USER","MASTER")
 			.requestMatchers("/api/master/**").hasAnyAuthority("MASTER")
-			.anyRequest().authenticated());
-		
-		
+			.anyRequest().authenticated());		
 		http.exceptionHandling((exceptions) -> exceptions
 		    .authenticationEntryPoint((request, response, authException) -> {
 		        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // 401
