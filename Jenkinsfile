@@ -13,14 +13,14 @@ pipeline {
         stage("Compile") {
             steps {
                 dir('restapi'){
-                    sh "./gradlew compileJava -x test"
+                    sh "./gradlew clean compileJava -x test"
                 }
             }
         }
         stage("Build") {
             steps {
                 dir('restapi'){
-                    sh "./gradlew build -x test"
+                    sh "./gradlew clean build -x test"
                 }
                 sh """
                     cp ./restapi/build/libs/BoardRest-0.0.1-SNAPSHOT.jar ./docker/boardrest/boardrest.jar
