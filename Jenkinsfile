@@ -3,9 +3,6 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-token')
     }
     agent any
-    tools {
-        jdk 'jdk17' 
-    }
     triggers {
         pollSCM('* * * * *')
     }
