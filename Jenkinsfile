@@ -23,7 +23,7 @@ pipeline {
         stage("Build") {
             steps {
 	    dir("restapi"){
-	         sh "./restapi/gradlew build"
+	         sh "./gradlew build"
  	    }
                 sh "cp ./restapi/build/libs/MiniBoard-0.0.1-SNAPSHOT.jar ./docker/smboard/"
             }
