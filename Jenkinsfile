@@ -14,13 +14,17 @@ pipeline {
 
         stage("Clean") {
             steps {
-                sh "./restapi/gradlew clean"
+	    dir("restapi"){
+	         sh "./gradlew clean" 
+ 	    }
             }
         }
 
         stage("Build") {
             steps {
-                sh "./restapi/gradlew build"
+	    dir("restapi"){
+	         sh "./restapi/gradlew build"
+ 	    }
                 sh "cp ./restapi/build/libs/MiniBoard-0.0.1-SNAPSHOT.jar ./docker/smboard/"
             }
         }
